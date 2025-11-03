@@ -2,6 +2,7 @@ const express = require("express");
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoute");
 const leadRoute = require("./routes/leadRoute");
+const errorHandler = require("./middlewares/errorMiddleware");
 require("dotenv").config();
 
 const app = express();
@@ -11,6 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/v1/lead", leadRoute);
+
+app.use(errorHandler);
 
 sequelize
   .authenticate()
