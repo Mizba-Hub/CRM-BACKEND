@@ -11,10 +11,8 @@ const {
 
 router.use(authMiddleware);
 
-router.get("/", getLeads);
-router.get("/:id", getLeadById);
-router.post("/", createLead);
-router.put("/:id", updateLead);
-router.delete("/:id", deleteLead);
+router.route("/").get(getLeads).post(createLead);
+
+router.route("/:id").get(getLeadById).put(updateLead).delete(deleteLead);
 
 module.exports = router;

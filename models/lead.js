@@ -14,10 +14,18 @@ const Lead = sequelize.define("Lead", {
   },
 });
 
-Lead.belongsTo(User, {
-  as: "ContactOwner",
-  foreignKey: "ContactOwnerId",
-  onDelete: "SET NULL",
+Lead.belongsToMany(User, {
+  through: "LeadUsers",
+  as: "Users",
+  foreignKey: "leadId",
+  otherKey: "userId",
+});
+
+User.belongsToMany(Lead, {
+  through: "LeadUsers",
+  as: "Leads",
+  foreignKey: "userId",
+  otherKey: "leadId",
 });
 
 module.exports = Lead;
