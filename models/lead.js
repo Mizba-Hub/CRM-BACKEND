@@ -9,9 +9,10 @@ const Lead = sequelize.define("Lead", {
   phoneNumber: { type: DataTypes.STRING },
   jobTitle: { type: DataTypes.STRING },
   leadStatus: {
-    type: DataTypes.ENUM("NEW", "OPEN", "QUALIFIED", "IN PROGRESS", "CLOSED"),
+    type: DataTypes.ENUM("NEW", "OPEN", "QUALIFIED", "IN PROGRESS", "CLOSED","CONVERTED"),
     defaultValue: "NEW",
   },
+  city:{type:DataTypes.STRING}
 });
 
 Lead.belongsToMany(User, {
