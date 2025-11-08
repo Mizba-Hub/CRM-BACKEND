@@ -4,22 +4,34 @@ const createAttachment = async (req, res) => {
   try {
     const { uploadedById, linkedType, linkedId } = req.body;
 
-    if (!req.file) {
-      return res.status(400).json({ message: "File is required" });
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "At least one file is required" });
     }
 
-    const attachment = await attachmentRepo.createAttachment({
-      filename: req.file.originalname,
-      fileUrl: req.file.path,
-      uploadedById,
-      linkedType,
-      linkedId,
-    });
+    const totalSize = req.files.reduce((acc, file) => acc + file.size, 0);
+    const MAX_TOTAL_SIZE = 20 * 1024 * 1024;
+    if (totalSize > MAX_TOTAL_SIZE) {
+      return res.status(400).json({ message: "Total file size exceeds 20 MB" });
+    }
 
-    const result = await attachmentRepo.getAttachmentById(attachment.id);
+    const attachments = await Promise.all(
+      req.files.map((file) =>
+        attachmentRepo.createAttachment({
+          filename: file.originalname,
+          fileUrl: file.path,
+          frontendUrl: `${req.protocol}://${req.get("host")}/${file.path}`,
+          uploadedById,
+          linkedType,
+          linkedId,
+        })
+      )
+    );
 
-    res.status(201).json(result);
+    res
+      .status(201)
+      .json({ message: "Files uploaded successfully", attachments });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
