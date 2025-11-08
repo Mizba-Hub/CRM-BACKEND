@@ -5,6 +5,8 @@ const companyRoutes = require("./routes/companyRoute");
 const leadRoute = require("./routes/leadRoute");
 const errorHandler = require("./middlewares/errorMiddleware");
 const authMiddleware = require("./middlewares/authMiddleware");
+const attachmentRoutes = require("./routes/activity/attachmentRoute");
+
 require("dotenv").config();
 
 const app = express();
@@ -16,6 +18,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/auth/users", authMiddleware);
 app.use("/api/v1/lead", leadRoute);
 app.use("/api/v1/companies", companyRoutes);
+app.use("/api/v1/attachments", attachmentRoutes);
 
 app.use(errorHandler);
 
