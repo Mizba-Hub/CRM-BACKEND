@@ -19,6 +19,7 @@ app.use("/api/auth/users", authMiddleware);
 app.use("/api/v1/lead", leadRoute);
 app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/attachments", attachmentRoutes);
+app.use("/uploads", express.static("uploads"));
 
 app.use(errorHandler);
 

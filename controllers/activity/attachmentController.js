@@ -2,11 +2,15 @@ const attachmentRepo = require("../../repositories/activity/attachmentRepository
 
 const createAttachment = async (req, res) => {
   try {
-    const { filename, fileUrl, uploadedById, linkedType, linkedId } = req.body;
+    const { uploadedById, linkedType, linkedId } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: "File is required" });
+    }
 
     const attachment = await attachmentRepo.createAttachment({
-      filename,
-      fileUrl,
+      filename: req.file.originalname,
+      fileUrl: req.file.path,
       uploadedById,
       linkedType,
       linkedId,
