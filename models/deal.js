@@ -54,10 +54,18 @@ Deal.belongsToMany(User, {
   foreignKey: 'dealId',
   otherKey: 'userId'
 });
-
+User.belongsToMany(Deal, {
+  through: 'DealOwners',
+  as: 'ownedDeals',
+  foreignKey: 'userId',
+  otherKey: 'dealId'
+});
 Deal.belongsTo(Lead, {
   as: 'associatedLead',
   foreignKey: 'leadId'
 });
-
+Lead.hasMany(Deal, {
+  as: 'deals',
+  foreignKey: 'leadId'
+});
 module.exports = Deal;
