@@ -8,15 +8,15 @@ const Deal = sequelize.define('Deal', {
     primaryKey: true,
     autoIncrement: true
   },
-  dealName: {
-    type: DataTypes.ENUM("Presentation Scheduled","Qualified to Buy","Contract Sent","Closed Won","Appointment Scheduled","Decision Maker Bought In","Closed Lost" ),
+ dealName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  dealStage: {
+     type: DataTypes.ENUM("Presentation Scheduled","Qualified to Buy","Contract Sent","Closed Won","Appointment Scheduled","Decision Maker Bought In","Closed Lost" ),
     defaultValue: "Presentation Scheduled",
     allowNull:false
 
-  },
-  dealStage: {
-    type: DataTypes.STRING,
-    allowNull: false
   },
   amount: {
     type: DataTypes.STRING,
@@ -29,10 +29,6 @@ const Deal = sequelize.define('Deal', {
   closeDate: {
     type: DataTypes.DATE,
     allowNull: false
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true
   },
   leadId: {
     type: DataTypes.INTEGER,
