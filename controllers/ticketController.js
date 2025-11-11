@@ -86,34 +86,49 @@ const getTicketById = asyncHandler(async (req, res) => {
 const createTicket = asyncHandler(async (req, res) => {
   const { userIds = [], ...rawTicketData } = req.body;
 
-  const companyId = rawTicketData.companyId || rawTicketData.CompanyId;
-  if (!companyId) {
+  const normalizedCompanyId =
+    rawTicketData.companyId ?? rawTicketData.CompanyId ?? null;
+  const normalizedDealId = rawTicketData.dealId ?? rawTicketData.DealId ?? null;
+
+  if (normalizedCompanyId && normalizedDealId) {
     throw new CustomError(
-      "Company is required for a ticket",
+      "Ticket can be linked to either a company or a deal, not both",
       400,
-      "COMPANY_REQUIRED"
+      "TICKET_TARGET_CONFLICT"
     );
   }
 
-  const company = await Company.findByPk(companyId);
-  if (!company) {
-    throw new CustomError("Company not found", 404, "COMPANY_NOT_FOUND");
+  if (!normalizedCompanyId && !normalizedDealId) {
+    throw new CustomError(
+      "Either companyId or dealId must be provided",
+      400,
+      "TICKET_TARGET_REQUIRED"
+    );
   }
 
-  const ticketData = {
-    ...rawTicketData,
-    companyId,
-  };
+  if (normalizedCompanyId) {
+    const company = await Company.findByPk(normalizedCompanyId);
+    if (!company) {
+      throw new CustomError("Company not found", 404, "COMPANY_NOT_FOUND");
+    }
+  }
 
-  if (ticketData.dealId) {
-    const deal = await Deal.findByPk(ticketData.dealId);
+  if (normalizedDealId) {
+    const deal = await Deal.findByPk(normalizedDealId);
     if (!deal) {
       throw new CustomError("Deal not found", 404, "DEAL_NOT_FOUND");
     }
   }
 
+  const ticketData = {
+    ...rawTicketData,
+    companyId: normalizedCompanyId,
+    dealId: normalizedDealId,
+  };
+
   delete ticketData.CompanyId;
   delete ticketData.CompanyName;
+  delete ticketData.DealId;
 
   let finalUserIds = userIds;
   if (!finalUserIds.length && req.user?.id) {
@@ -122,6 +137,7 @@ const createTicket = asyncHandler(async (req, res) => {
 
   const ticket = await ticketRepository.createTicket(ticketData);
 
+  // Assign users to ticket
   if (finalUserIds.length) {
     await ticket.setUsers(finalUserIds);
   }
@@ -141,39 +157,75 @@ const updateTicket = asyncHandler(async (req, res) => {
     );
 
   const updateData = { ...rawUpdateData };
-  const incomingCompanyId = rawUpdateData.companyId || rawUpdateData.CompanyId;
+  const hasCompanyId =
+    Object.prototype.hasOwnProperty.call(rawUpdateData, "companyId") ||
+    Object.prototype.hasOwnProperty.call(rawUpdateData, "CompanyId");
+  const hasDealId = Object.prototype.hasOwnProperty.call(
+    rawUpdateData,
+    "dealId"
+  );
 
-  if (typeof incomingCompanyId !== "undefined") {
-    if (!incomingCompanyId) {
-      throw new CustomError(
-        "Company is required for a ticket",
-        400,
-        "COMPANY_REQUIRED"
-      );
-    }
+  let finalCompanyId = ticket.companyId;
+  let finalDealId = ticket.dealId;
 
-    const company = await Company.findByPk(incomingCompanyId);
-    if (!company) {
-      throw new CustomError("Company not found", 404, "COMPANY_NOT_FOUND");
+  if (hasCompanyId) {
+    const incomingCompanyId =
+      rawUpdateData.companyId ?? rawUpdateData.CompanyId ?? null;
+
+    if (incomingCompanyId) {
+      const company = await Company.findByPk(incomingCompanyId);
+      if (!company) {
+        throw new CustomError("Company not found", 404, "COMPANY_NOT_FOUND");
+      }
     }
 
     updateData.companyId = incomingCompanyId;
+    finalCompanyId = incomingCompanyId;
   }
 
-  if (Object.prototype.hasOwnProperty.call(rawUpdateData, "dealId")) {
-    if (rawUpdateData.dealId) {
-      const deal = await Deal.findByPk(rawUpdateData.dealId);
+  if (hasDealId) {
+    const incomingDealId = rawUpdateData.dealId ?? null;
+
+    if (incomingDealId) {
+      const deal = await Deal.findByPk(incomingDealId);
       if (!deal) {
         throw new CustomError("Deal not found", 404, "DEAL_NOT_FOUND");
       }
-      updateData.dealId = rawUpdateData.dealId;
-    } else {
-      updateData.dealId = null;
     }
+
+    updateData.dealId = incomingDealId;
+    finalDealId = incomingDealId;
+  }
+
+  if (hasDealId && finalDealId && !hasCompanyId && ticket.companyId) {
+    updateData.companyId = null;
+    finalCompanyId = null;
+  }
+
+  if (hasCompanyId && finalCompanyId && !hasDealId && ticket.dealId) {
+    updateData.dealId = null;
+    finalDealId = null;
+  }
+
+  if (finalCompanyId && finalDealId) {
+    throw new CustomError(
+      "Ticket can be linked to either a company or a deal, not both",
+      400,
+      "TICKET_TARGET_CONFLICT"
+    );
+  }
+
+  if (!finalCompanyId && !finalDealId) {
+    throw new CustomError(
+      "Either companyId or dealId must be provided",
+      400,
+      "TICKET_TARGET_REQUIRED"
+    );
   }
 
   delete updateData.CompanyId;
   delete updateData.CompanyName;
+  delete updateData.DealId;
 
   await ticketRepository.updateTicket(ticket, updateData);
 
