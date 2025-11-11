@@ -8,6 +8,7 @@ const ticketRoutes = require('./routes/ticketRoute');
 const errorHandler = require("./middlewares/errorMiddleware");
 const authMiddleware = require("./middlewares/authMiddleware");
 const attachmentRoutes = require("./routes/activity/attachmentRoute");
+const callRoutes = require("./routes/activity/callRoutes");
 
 require("dotenv").config();
 const Deal = require("./models/deal"); 
@@ -24,6 +25,10 @@ app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/deal",dealRoutes)
 app.use('/api/v1/tickets', ticketRoutes);
 app.use("/api/v1/attachments", attachmentRoutes);
+app.use("/api/v1/calls", callRoutes);
+app.use("/uploads", express.static("uploads"));
+
+app.use(errorHandler);
 app.use("/uploads", express.static("uploads"));
 
 app.use(errorHandler);
