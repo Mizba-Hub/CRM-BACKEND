@@ -1,7 +1,18 @@
+
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/database");
 const User = require("../user");
-const { TARGET_TYPES, CALL_RESULTS } = require("../../utils/activity/callConstants");
+const TARGET_TYPES = {
+  LEAD: "lead",
+  DEAL: "deal",
+  COMPANY: "company",
+  TICKET: "ticket",
+};
+
+const CALL_RESULTS = {
+  SUCCESSFUL: "successful",
+  UNSUCCESSFUL: "unsuccessful",
+};
 
 
 const Call = sequelize.define(
@@ -80,5 +91,15 @@ Call.belongsTo(User, {
   foreignKey: "userId",
   as: "User",
 });
+
+User.hasMany(Call, {
+  foreignKey: "userId",
+  as: "calls",
+});
+
+Call.enums = {
+  TARGET_TYPES,
+  CALL_RESULTS,
+};
 
 module.exports = Call;
