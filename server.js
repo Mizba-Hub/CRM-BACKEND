@@ -8,6 +8,8 @@ const ticketRoutes = require('./routes/ticketRoute');
 const errorHandler = require("./middlewares/errorMiddleware");
 const authMiddleware = require("./middlewares/authMiddleware");
 const attachmentRoutes = require("./routes/activity/attachmentRoute");
+const meetingRoute = require("./routes/activity/meetingRoute");
+
 const callRoutes = require("./routes/activity/callRoutes");
 
 require("dotenv").config();
@@ -30,6 +32,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(errorHandler);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/v1/meetings", meetingRoute);
 
 app.use(errorHandler);
 
