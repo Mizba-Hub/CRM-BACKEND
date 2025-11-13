@@ -11,6 +11,7 @@ const attachmentRoutes = require("./routes/activity/attachmentRoute");
 const meetingRoute = require("./routes/activity/meetingRoute");
 const taskRoutes = require("./routes/activity/taskRoutes");
 const callRoutes = require("./routes/activity/callRoutes");
+const dashboardRoutes=require("./routes/dashboardRoute");
 
 require("dotenv").config();
 const Deal = require("./models/deal");
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/users", authMiddleware);
+app.use("/api/v1/dashboard",dashboardRoutes);
 app.use("/api/v1/lead", leadRoute);
 app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/deal", dealRoutes);
