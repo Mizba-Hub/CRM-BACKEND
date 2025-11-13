@@ -17,8 +17,14 @@ const Company = sequelize.define("Company", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  industryType: { type: DataTypes.STRING },
-  type: { type: DataTypes.STRING },
+  industryType: {
+     type: DataTypes.ENUM("Technology", "Education", "Finance", "Healthcare", "Retail"),
+      allowNull: true,
+    },
+  type: {
+      type: DataTypes.ENUM("Private", "Public", "Government", "Non-profit"),
+      allowNull: true,
+     },
   city: { type: DataTypes.STRING },
   country: { type: DataTypes.STRING },
   noOfEmployees: { type: DataTypes.INTEGER },
