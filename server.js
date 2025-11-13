@@ -12,11 +12,12 @@ const meetingRoute = require("./routes/activity/meetingRoute");
 const taskRoutes = require("./routes/activity/taskRoutes");
 const callRoutes = require("./routes/activity/callRoutes");
 const dashboardRoutes=require("./routes/dashboardRoute");
+const Deal = require("./models/deal");
+const noteRoutes = require('./routes/activity/noteRoutes');
+const emailRoutes = require('./routes/activity/emailRoutes');
+const app = express();
 
 require("dotenv").config();
-const Deal = require("./models/deal");
-
-const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,6 +30,8 @@ app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/deal", dealRoutes);
 app.use("/api/v1/tickets", ticketRoutes);
 app.use("/api/v1/attachments", attachmentRoutes);
+app.use('/api/v1/notes', noteRoutes);
+app.use('/api/v1/emails', emailRoutes);
 app.use("/api/v1/calls", callRoutes);
 app.use("/api/v1/tasks", taskRoutes);
 app.use("/uploads", express.static("uploads"));
