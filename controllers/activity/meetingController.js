@@ -23,7 +23,6 @@ const createMeeting = async (req, res) => {
       organizerId, organizerIds, attendeeIds, linkedModule, linkedModuleId
     } = req.body;
 
-    
     let orgIds = [];
     if (Array.isArray(organizerIds)) orgIds = organizerIds;
     else if (organizerId != null) orgIds = [organizerId];
@@ -61,7 +60,6 @@ const getMeetings = async (req, res) => {
   }
 };
 
-
 const getMeetingById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -73,6 +71,23 @@ const getMeetingById = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
+const getMeetingsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const meetings = await meetingRepo.getMeetingsByUser(userId);
+
+    if (!meetings || meetings.length === 0) {
+      return res.status(404).json({ success: false, message: "No meetings found for this user" });
+    }
+
+    res.status(200).json({ success: true, count: meetings.length, data: meetings });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error while fetching user meetings" });
+  }
+};
+
 
 
 const updateMeeting = async (req, res) => {
@@ -94,14 +109,15 @@ const updateMeeting = async (req, res) => {
     const updatedMeeting = await meetingRepo.updateMeeting(id, updateData);
     if (!updatedMeeting) return res.status(404).json({ message: "Meeting not found" });
 
-    const result = await meetingRepo.getMeetingById(updatedMeeting.id);
-    return res.json({ message: "Meeting updated successfully", data: result });
+     return res.status(200).json({
+      id: updatedMeeting.id,
+      updatedAt: updatedMeeting.updatedAt
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: err.message });
   }
 };
-
 
 const deleteMeeting = async (req, res) => {
   try {
@@ -120,5 +136,6 @@ module.exports = {
   getMeetings,
   getMeetingById,
   updateMeeting,
-  deleteMeeting
+  deleteMeeting,
+  getMeetingsByUser, 
 };
