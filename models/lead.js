@@ -9,7 +9,7 @@ const Lead = sequelize.define("Lead", {
   phoneNumber: { type: DataTypes.STRING },
   jobTitle: { type: DataTypes.STRING },
   leadStatus: {
-    type: DataTypes.ENUM("NEW", "OPEN", "QUALIFIED", "IN PROGRESS", "CLOSED","CONVERTED"),
+    type: DataTypes.ENUM("NEW", "OPEN", "QUALIFIED", "IN PROGRESS","CONTACT","CLOSED","CONVERTED"),
     defaultValue: "NEW",
   },
   city:{type:DataTypes.STRING}
