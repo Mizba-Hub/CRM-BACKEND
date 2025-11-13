@@ -30,15 +30,33 @@ Meeting.init(
     duration: {
       type: DataTypes.STRING,
     },
+
+   
     location: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(
+        "Conference Room A",
+        "Conference Room B",
+        "Google Meet",
+        "Zoom Meeting",
+        "MS Meet"
+      ),
+      allowNull: true,
     },
+
     reminder: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(
+        "10 minutes before",
+        "30 minutes before",
+        "1 hour before",
+        "1 day before"
+      ),
+      allowNull: true,
     },
+
     note: {
       type: DataTypes.TEXT,
     },
+
     linkedModule: {
       type: DataTypes.ENUM("lead", "deal", "ticket", "company"),
       allowNull: false,
@@ -65,14 +83,13 @@ Meeting.init(
   }
 );
 
- 
+
 Meeting.belongsToMany(User, {
   through: "MeetingOrganizers",
   as: "organizers",
   foreignKey: "meetingId",
   otherKey: "userId",
 });
-
 
 Meeting.belongsToMany(User, {
   through: "MeetingAttendees",

@@ -50,7 +50,6 @@ sequelize
 
 sequelize
   .sync()
-
   .then(() => console.log("Tables synced"))
   .catch((err) => console.log(err));
 
