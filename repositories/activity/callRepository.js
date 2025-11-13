@@ -12,6 +12,14 @@ const findCallById = async (id) => {
   return call;
 };
 
+const findCallsByUserId = async (userId) => {
+  const calls = await Call.findAll({
+    where: { userId },
+    order: [["startedAt", "DESC"]],
+    include: [{ association: "User" }],
+  });
+  return calls;
+};
 const updateCall = async (callInstance, updates) => {
   await callInstance.update(updates);
   return callInstance;
@@ -25,6 +33,7 @@ const deleteCall = async (callInstance) => {
 module.exports = {
   createCall,
   findCallById,
+  findCallsByUserId,
   updateCall,
   deleteCall,
 };

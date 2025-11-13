@@ -8,7 +8,8 @@ const Ticket = require("../../models/ticket");
 const Deal = require("../../models/deal");
 const callRepository = require("../../repositories/activity/callRepository");
 const callService = require("../../services/callService");
-const { TARGET_TYPES, CALL_RESULTS } = require("../../utils/activity/callConstants");
+const Call = require("../../models/activity/call");
+const { TARGET_TYPES, CALL_RESULTS } = Call.enums;
 
 const buildTargetName = (record, targetType) => {
   if (!record) return null;
@@ -214,6 +215,26 @@ const getCallById = asyncHandler(async (req, res) => {
   res.status(200).json(responseBody);
 });
 
+const getCallsByUserId = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    throw new CustomError("userId is required", 400, "INVALID_REQUEST");
+  }
+
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new CustomError("User not found", 404, "USER_NOT_FOUND");
+  }
+
+  const callList = await callRepository.findCallsByUserId(userId);
+  const responseBody = callList.map((callInstance) =>
+    formatCallResponse(callInstance)
+  );
+
+  res.status(200).json(responseBody);
+});
+
 const endCall = asyncHandler(async (req, res) => {
   const call = await callRepository.findCallById(
     req.params.callId || req.params.id
@@ -251,6 +272,7 @@ const endCall = asyncHandler(async (req, res) => {
 module.exports = {
   initiateCall,
   getCallById,
+  getCallsByUserId,
   endCall,
 };
 

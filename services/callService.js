@@ -1,5 +1,6 @@
 const twilio = require("twilio");
-const { CALL_RESULTS } = require("../utils/activity/callConstants");
+const Call = require("../models/activity/call");
+const { CALL_RESULTS } = Call.enums;
 const CustomError = require("../utils/customError");
 
 const {
