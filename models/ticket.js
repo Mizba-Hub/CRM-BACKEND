@@ -8,9 +8,11 @@ const Ticket = sequelize.define(
   "Ticket",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      
+       type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
+      allowNull: false,
     },
     TicketName: {
       type: DataTypes.STRING,
