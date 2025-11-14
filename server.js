@@ -1,5 +1,6 @@
 const express = require("express");
 const sequelize = require("./config/database");
+const cors = require("cors");
 const authRoutes = require("./routes/authRoute");
 const companyRoutes = require("./routes/companyRoute");
 const leadRoute = require("./routes/leadRoute");
@@ -18,6 +19,12 @@ const emailRoutes = require('./routes/activity/emailRoutes');
 const app = express();
 
 require("dotenv").config();
+
+app.use(cors({
+  origin: "*", 
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
