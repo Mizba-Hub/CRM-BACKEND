@@ -13,7 +13,7 @@ const Deal = sequelize.define('Deal', {
     allowNull: false
   },
   dealStage: {
-     type: DataTypes.ENUM("Presentation Scheduled","Qualified to Buy","Contract Sent","Closed Won","Appointment Scheduled","Decision Maker Bought In","Closed Lost" ),
+     type: DataTypes.ENUM("Presentation Scheduled","Qualified to Buy","Contract Sent","Closed Won","Appointment Scheduled","Decision Maker Bought In","Closed Lost","Negotiation"),
     defaultValue: "Presentation Scheduled",
     allowNull:false
 
@@ -23,8 +23,9 @@ const Deal = sequelize.define('Deal', {
     allowNull: false
   },
   priority: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: DataTypes.ENUM("High","Medium","Low","Critical"),
+    defaultValue: "High",
+    allowNull:false
   },
   closeDate: {
     type: DataTypes.DATE,
