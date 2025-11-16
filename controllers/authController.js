@@ -17,6 +17,7 @@ const register = async (req, res) => {
       password,
       confirmPassword,
       country,
+      role
     } = req.body;
 
     if (password !== confirmPassword)
@@ -36,11 +37,14 @@ const register = async (req, res) => {
       industryType,
       password: hashedPassword,
       country,
+      role
     });
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+     const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
 
     res.status(201).json({ token, user });
   } catch (err) {
@@ -58,14 +62,19 @@ const login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+    
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
     res.json({ token, user });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 const forgotPassword = async (req, res) => {
   try {
@@ -126,5 +135,7 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
 
 module.exports = { register, login, forgotPassword, resetPassword, getAllUsers };

@@ -12,6 +12,12 @@ const User = sequelize.define("User", {
   country: { type: DataTypes.STRING },
   resetToken: { type: DataTypes.STRING },
   resetTokenExpiry: { type: DataTypes.DATE },
+
+    role: {
+    type: DataTypes.ENUM("admin", "user"),
+    allowNull: false,
+    defaultValue: "user",
+  },
 });
 
 module.exports = User;
