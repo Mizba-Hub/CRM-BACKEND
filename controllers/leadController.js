@@ -2,12 +2,21 @@ const asyncHandler = require("express-async-handler");
 const leadRepo = require("../repositories/leadRepository");
 const CustomError = require("../utils/customError");
 
+const getAllLeads = async (req, res) => {
+  try {
+    const { leads, total, page, size } = await leadRepo.findAllLeads(req.query);
 
-const getLeads = asyncHandler(async (req, res) => {
-  const leads = await leadRepo.findAllLeads(req.query, req.user);
-  res.json({ success: true, data: leads });
-});
-
+    res.json({
+      success: true,
+      data: leads,
+      total,
+      page,
+      size,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
 
 const getLeadById = asyncHandler(async (req, res) => {
   const lead = await leadRepo.findLeadById(req.params.id);
@@ -20,7 +29,6 @@ const getLeadById = asyncHandler(async (req, res) => {
   res.json({ success: true, data: lead });
 });
 
-
 const createLead = asyncHandler(async (req, res) => {
   const { email, userIds = [], ...leadData } = req.body;
 
@@ -30,14 +38,10 @@ const createLead = asyncHandler(async (req, res) => {
 
   const lead = await leadRepo.createLead({ email, ...leadData });
 
-  
-  if (userIds.length) {
-    await lead.setUsers(userIds); 
-  }
+  if (userIds.length) await lead.setUsers(userIds);
 
   res.status(201).json({ success: true, data: { id: lead.id } });
 });
-
 
 const updateLead = asyncHandler(async (req, res) => {
   const { userIds, ...updateData } = req.body;
@@ -52,14 +56,10 @@ const updateLead = asyncHandler(async (req, res) => {
 
   await leadRepo.updateLead(lead, updateData);
 
-  
-  if (userIds) {
-    await lead.setUsers(userIds);
-  }
+  if (userIds) await lead.setUsers(userIds);
 
   res.json({ success: true, data: { id: lead.id, updatedAt: new Date() } });
 });
-
 
 const deleteLead = asyncHandler(async (req, res) => {
   const lead = await leadRepo.findLeadById(req.params.id);
@@ -74,4 +74,10 @@ const deleteLead = asyncHandler(async (req, res) => {
   res.json({ success: true, data: { deleted: true } });
 });
 
-module.exports = { getLeads, getLeadById, createLead, updateLead, deleteLead };
+module.exports = {
+  getAllLeads,
+  getLeadById,
+  createLead,
+  updateLead,
+  deleteLead,
+};
