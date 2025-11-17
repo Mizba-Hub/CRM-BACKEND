@@ -5,6 +5,10 @@ const createAttachment = async (data) => {
   return await Attachment.create(data);
 };
 
+const getAllAttachments = () => {
+  return Attachment.findAll();
+};
+
 const getAttachmentById = async (id) => {
   return await Attachment.findOne({
     where: { id },
@@ -36,6 +40,7 @@ const deleteAttachment = async (id) => {
 
 module.exports = {
   createAttachment,
+  getAllAttachments,
   getAttachmentById,
   getAttachmentsByLinked,
   deleteAttachment,

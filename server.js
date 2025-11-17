@@ -17,6 +17,7 @@ const dashboardRoutes=require("./routes/dashboardRoute");
 const Deal = require("./models/deal");
 const noteRoutes = require('./routes/activity/noteRoutes');
 const emailRoutes = require('./routes/activity/emailRoutes');
+const activityRoute=require("./routes/activity/activitySummaryRoute");
 const app = express();
 
 require("dotenv").config();
@@ -30,6 +31,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/users", authMiddleware);
 app.use("/api/v1/dashboard",dashboardRoutes);
@@ -37,6 +39,7 @@ app.use("/api/v1/lead", leadRoute);
 app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/deal", dealRoutes);
 app.use("/api/v1/tickets", ticketRoutes);
+app.use("/api/v1/activities",activityRoute);
 app.use("/api/v1/attachments", attachmentRoutes);
 app.use('/api/v1/notes', noteRoutes);
 app.use('/api/v1/emails', emailRoutes);

@@ -36,6 +36,27 @@ const createAttachment = async (req, res) => {
   }
 };
 
+const getAttachments = async (req, res) => {
+  try {
+    const { linkedType, linkedId } = req.query;
+
+    let attachments;
+
+    if (linkedType && linkedId) {
+      attachments = await attachmentRepo.getAttachmentsByLinked(
+        linkedType,
+        linkedId
+      );
+    } else {
+      attachments = await attachmentRepo.getAllAttachments();
+    }
+
+    res.json(attachments);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const getAttachment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -44,19 +65,6 @@ const getAttachment = async (req, res) => {
       return res.status(404).json({ message: "Attachment not found" });
 
     res.json(attachment);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const getAttachmentsByLinked = async (req, res) => {
-  try {
-    const { linkedType, linkedId } = req.query;
-    const attachments = await attachmentRepo.getAttachmentsByLinked(
-      linkedType,
-      linkedId
-    );
-    res.json(attachments);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -77,7 +85,7 @@ const deleteAttachment = async (req, res) => {
 
 module.exports = {
   createAttachment,
+  getAttachments,
   getAttachment,
-  getAttachmentsByLinked,
   deleteAttachment,
 };
