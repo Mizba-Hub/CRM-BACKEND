@@ -2,7 +2,7 @@ const Lead = require("../models/lead");
 const User = require("../models/user");
 const { Op } = require("sequelize");
 
-const findAllLeads = async (query) => {
+const findAllLeads = async (query, user) => {
   const { status, search, page = 1, size = 10 } = query;
 
   const where = {};
@@ -20,7 +20,25 @@ const findAllLeads = async (query) => {
     ];
   }
 
-  const leads = await Lead.findAll({
+  if (user.role !== "admin") {
+    return await Lead.findAll({
+      where,
+      include: [
+        {
+          model: User,
+          as: "Users",
+          where: { id: user.id },
+          attributes: ["id", "firstName", "lastName", "email"],
+          through: { attributes: [] },
+        },
+      ],
+      limit: parseInt(size),
+      offset: (parseInt(page) - 1) * parseInt(size),
+      order: [["createdAt", "DESC"]],
+    });
+  }
+
+  return await Lead.findAll({
     where,
     include: [
       {
@@ -34,8 +52,6 @@ const findAllLeads = async (query) => {
     offset: (parseInt(page) - 1) * parseInt(size),
     order: [["createdAt", "DESC"]],
   });
-
-  return leads;
 };
 
 const findLeadById = async (id) => {

@@ -4,7 +4,7 @@ const CustomError = require("../utils/customError");
 
 
 const getLeads = asyncHandler(async (req, res) => {
-  const leads = await leadRepo.findAllLeads(req.query);
+  const leads = await leadRepo.findAllLeads(req.query, req.user);
   res.json({ success: true, data: leads });
 });
 
