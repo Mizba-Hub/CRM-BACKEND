@@ -6,7 +6,7 @@ const upload = require("../../middlewares/uploadMidlleware");
 router
   .route("/")
   .post(upload.array("files"), attachmentController.createAttachment)
-  .get(attachmentController.getAttachmentsByLinked);
+  .get(attachmentController.getAttachments);
 
 router
   .route("/:id")
