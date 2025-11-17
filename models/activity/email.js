@@ -26,12 +26,4 @@ const Email = sequelize.define(
     updatedAt: "updatedAt",
   }
 );
-
-// Associations
-Email.belongsTo(User, { as: "owner", foreignKey: "userId" });
-User.hasMany(Email, { as: "emails", foreignKey: "userId" });
-
-Email.hasMany(Attachment, { as: "attachments", foreignKey: "emailId" });
-Attachment.belongsTo(Email, { as: "email", foreignKey: "emailId" });
-
 module.exports = Email;

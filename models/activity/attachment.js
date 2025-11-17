@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/database");
 const User = require("../user");
+const Email=require('../activity/email')
 
 const Attachment = sequelize.define("Attachment", {
   filename: { type: DataTypes.STRING, allowNull: false },
@@ -12,14 +13,18 @@ const Attachment = sequelize.define("Attachment", {
     onUpdate: "CASCADE",
     onDelete: "NO ACTION",
   },
+  emailId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: { model: "emails", key: "id" },
+    onDelete: "CASCADE",
+  },
   linkedType: {
     type: DataTypes.ENUM("deal", "lead", "company", "ticket"),
-    allowNull: false,
+    allowNull: true,
   },
-  linkedId: { type: DataTypes.STRING, allowNull: false },
+  linkedId: { type: DataTypes.STRING, allowNull: true },
 });
 
-Attachment.belongsTo(User, { foreignKey: "uploadedById", as: "uploadedBy" });
-User.hasMany(Attachment, { foreignKey: "uploadedById", as: "attachments" });
 
 module.exports = Attachment;
