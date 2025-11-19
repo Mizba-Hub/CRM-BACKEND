@@ -1,71 +1,71 @@
-
-const { Op } = require("sequelize");
+ const { Op } = require("sequelize");
 const Company = require("../models/company");
-const User    = require("../models/user");
-const Lead    = require("../models/lead");
+const User = require("../models/user");
+const Lead = require("../models/lead");
 
 const findAllCompanies = async (query) => {
-  const { search, page = 1, size = 10 } = query;
+  const { search } = query; 
   const where = {};
 
   if (search) {
-    
     const normSearch = search.startsWith('+') ? search.slice(1) : search;
-
     where[Op.or] = [
-      { companyName : { [Op.iLike]: `%${normSearch}%` } },
-      { domainName  : { [Op.iLike]: `%${normSearch}%` } },
+      { companyName: { [Op.iLike]: `%${normSearch}%` } },
+      { domainName: { [Op.iLike]: `%${normSearch}%` } },
       { industryType: { [Op.iLike]: `%${normSearch}%` } },
-      { city        : { [Op.iLike]: `%${normSearch}%` } },
-      { country     : { [Op.iLike]: `%${normSearch}%` } },
-      { phoneNumber : { [Op.iLike]: `%${normSearch}%` } },                   
-      { '$Lead.phoneNumber$': { [Op.iLike]: `%${normSearch}%` } }            
+      { city: { [Op.iLike]: `%${normSearch}%` } },
+      { country: { [Op.iLike]: `%${normSearch}%` } },
+      { phoneNumber: { [Op.iLike]: `%${normSearch}%` } },
+      { '$Lead.phoneNumber$': { [Op.iLike]: `%${normSearch}%` } }
     ];
   }
+
+ 
 
   const companies = await Company.findAll({
     where,
     include: [
       {
-        model     : User,
-        as        : "Owners",
+        model: User,
+        as: "Owners",
         attributes: ["id", "firstName", "lastName"],
-        through   : { attributes: [] }
+        through: { attributes: [] }
       },
       {
-        model     : Lead,
-        as        : "Lead",
+        model: Lead,
+        as: "Lead",
         attributes: ["id", "phoneNumber"],
-        required  : false
+        required: false
       },
     ],
-    limit : parseInt(size, 10),
-    offset: (parseInt(page, 10) - 1) * parseInt(size, 10),
-    order : [["createdAt", "DESC"]],
+
+    order: [["createdAt", "DESC"]],
     subQuery: false
   });
 
-  return companies.map((c) => {
+  const result = companies.map((c) => {
     const plain = c.get({ plain: true });
-    
-    plain.phoneNumber = plain.phoneNumber || plain.Lead?.phoneNumber || null;
+    plain.phoneNumber = plain.phoneNumber || plain.Lead?.phoneNumber || "-";
+    plain.createdDate = plain.createdAt || "-";
     delete plain.Lead;
     return plain;
   });
+
+  return result;
 };
 
 const findCompanyById = async (id) => {
   const company = await Company.findByPk(id, {
     include: [
       {
-        model     : User,
-        as        : "Owners",
+        model: User,
+        as: "Owners",
         attributes: ["id", "firstName", "lastName"],
-        through   : { attributes: [] }
+        through: { attributes: [] }
       },
       {
-        model     : Lead,
-        as        : "Lead",
+        model: Lead,
+        as: "Lead",
         attributes: ["id", "phoneNumber"],
       },
     ],
@@ -74,29 +74,30 @@ const findCompanyById = async (id) => {
   if (!company) return null;
 
   const plain = company.get({ plain: true });
-  plain.phoneNumber = plain.phoneNumber || plain.Lead?.phoneNumber || null;
+  plain.phoneNumber = plain.phoneNumber || plain.Lead?.phoneNumber || "-";
+  plain.createdDate = plain.createdAt || "-";
   delete plain.Lead;
 
   return plain;
 };
 
-const findCompanyByName = async (companyName) => {
-  return await Company.findOne({ where: { companyName } });
+const deleteCompany = async (id) => {
+  return await Company.destroy({ where: { id } });
 };
 
 const createCompany = async (data) => {
   const company = await Company.create(data);
-  return company;
+  return company.get({ plain: true });
 };
 
-const updateCompany = async (company, data) => {
-  await company.update(data);
-  return company;
+const updateCompany = async (id, data) => {
+  await Company.update(data, { where: { id } });
+  const updatedCompany = await findCompanyById(id);
+  return updatedCompany;
 };
 
-const deleteCompany = async (company) => {
-  await company.destroy();
-  return true;
+const findCompanyByName = async (companyName) => {
+  return await Company.findOne({ where: { companyName } });
 };
 
 module.exports = {
