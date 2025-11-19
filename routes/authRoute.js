@@ -16,6 +16,6 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 
 
-router.get("/users", authMiddleware, adminMiddleware, getAllUsers);
+router.get("/users", authMiddleware, getAllUsers);
 
 module.exports = router;
