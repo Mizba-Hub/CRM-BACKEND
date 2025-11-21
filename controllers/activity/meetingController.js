@@ -23,11 +23,13 @@ const createMeeting = async (req, res) => {
       organizerId, organizerIds, attendeeIds, linkedModule, linkedModuleId
     } = req.body;
 
+   
+
     let orgIds = [];
     if (Array.isArray(organizerIds)) orgIds = organizerIds;
     else if (organizerId != null) orgIds = [organizerId];
 
-    if (!title || !startDate || !startTime || !linkedModule || orgIds.length === 0) {
+    if (!title || !startDate || !startTime || !endTime || !linkedModule || orgIds.length === 0) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -38,6 +40,7 @@ const createMeeting = async (req, res) => {
       organizerIds: orgIds,
       attendeeIds: Array.isArray(attendeeIds) ? attendeeIds : [],
     };
+
 
     const meeting = await meetingRepo.createMeeting(data);
     const result = await meetingRepo.getMeetingById(meeting.id);
