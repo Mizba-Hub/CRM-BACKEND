@@ -18,7 +18,12 @@ const linkedModels = {
   ticket: Ticket, 
   company: Company 
 };
-
+const stripHtml = (html = "") =>
+  html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .trim();
 
 exports.createEmail = async (req, res) => {
   try {
@@ -45,7 +50,7 @@ exports.createEmail = async (req, res) => {
     
     const email = await emailRepository.create({
       subject,
-      body,
+     body: stripHtml(body),
       userId: parseInt(userId),
       recipients: Array.isArray(recipients) ? recipients : [],
       cc: Array.isArray(cc) ? cc : [],
