@@ -123,7 +123,7 @@ const formatCallResponse = (callInstance) => {
 };
 
 const initiateCall = asyncHandler(async (req, res) => {
-  const { userId, targetType, targetId, callerPhone } = req.body;
+ const { userId, targetType, targetId, callerPhone, outcome } = req.body;
 
   if (!userId || !targetType || !targetId || !callerPhone) {
     throw new CustomError(
@@ -174,10 +174,12 @@ const initiateCall = asyncHandler(async (req, res) => {
   const startedAt = providerResponse.startedAt ?? new Date();
   const endedAt = providerResponse.endedAt ?? null;
   const durationSeconds = providerResponse.durationSeconds ?? null;
-  const result =
-    providerResponse.result === CALL_RESULTS.SUCCESSFUL
-      ? CALL_RESULTS.SUCCESSFUL
-      : CALL_RESULTS.UNSUCCESSFUL;
+  const result = outcome
+  ? outcome.toLowerCase() === "successful"
+    ? CALL_RESULTS.SUCCESSFUL
+    : CALL_RESULTS.UNSUCCESSFUL
+  : CALL_RESULTS.UNSUCCESSFUL;
+
 
   const callRecord = await callRepository.createCall({
     userId,
@@ -275,4 +277,3 @@ module.exports = {
   getCallsByUserId,
   endCall,
 };
-
