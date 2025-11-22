@@ -3,6 +3,7 @@ const router = express.Router();
 const meetingController = require("../../controllers/activity/meetingController");
 
 router.get("/", meetingController.getMeetings);
+router.get("/user/:userId", meetingController.getMeetingsByUser);
 
 router.get("/:id", meetingController.getMeetingById);
 
@@ -12,7 +13,7 @@ router.put("/:id", meetingController.updateMeeting);
 
 router.delete("/:id", meetingController.deleteMeeting);
 
-router.get("/user/:userId", meetingController.getMeetingsByUser);
+
 
 
 

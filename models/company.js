@@ -42,6 +42,7 @@ const Company = sequelize.define("Company", {
   },
 });
 
+
 Company.belongsToMany(User, {
   through: "CompanyOwners",
   as: "Owners",
