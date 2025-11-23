@@ -2,20 +2,19 @@ const Meeting = require("../../models/activity/meeting");
 const User = require("../../models/user");
 const { Op } = require("sequelize");
 
-// Calculate totalcount as organizers + attendees + linkedModuleId (always 1), avoid duplicates
+
 const calculateTotalCount = (plain) => {
   const uniqueIds = new Set();
 
   if (plain.organizers) plain.organizers.forEach((o) => uniqueIds.add(o.id));
   if (plain.attendees) plain.attendees.forEach((a) => uniqueIds.add(a.id));
 
-  // linkedModuleId always counts as 1, no matter what
-  if (plain.linkedModuleId != null) uniqueIds.add("linkedModule"); // use string to avoid colliding with numeric IDs
+  if (plain.linkedModuleId != null) uniqueIds.add("linkedModule"); 
 
   return uniqueIds.size;
 };
 
-// Build subtitle for response
+
 const buildSubtitle = (plain) => {
   if (plain.organizers && plain.organizers.length > 0) {
     const organizerNames = plain.organizers.map((o) => `${o.firstName} ${o.lastName}`).join(", ");
@@ -45,7 +44,7 @@ const createMeeting = async (data) => {
     plain.attendees = plain.attendees.map(({ id, firstName, lastName }) => ({ id, firstName, lastName }));
 
   const totalcount = calculateTotalCount(plain);
-  await meeting.update({ totalcount }); // <- update DB
+  await meeting.update({ totalcount }); 
 
   plain.totalcount = totalcount;
   plain.subtitle = buildSubtitle(plain);
@@ -70,7 +69,7 @@ const getMeetingById = async (id) => {
     plain.attendees = plain.attendees.map(({ id, firstName, lastName }) => ({ id, firstName, lastName }));
 
   const totalcount = calculateTotalCount(plain);
-  await meeting.update({ totalcount }); // <- update DB
+  await meeting.update({ totalcount }); 
 
   plain.totalcount = totalcount;
   plain.subtitle = buildSubtitle(plain);
@@ -110,7 +109,7 @@ const getMeetings = async ({ linkedModule, linkedModuleId, search, page = 1, siz
     plain.totalcount = totalcount;
     plain.subtitle = buildSubtitle(plain);
 
-    // update DB
+    
     meet.update({ totalcount });
 
     return plain;
@@ -145,7 +144,7 @@ const getMeetingsByUser = async (userId) => {
     plain.totalcount = totalcount;
     plain.subtitle = buildSubtitle(plain);
 
-    meet.update({ totalcount }); // update DB
+    meet.update({ totalcount }); 
 
     return plain;
   });
@@ -176,7 +175,7 @@ const updateMeeting = async (id, data) => {
     plain.attendees = plain.attendees.map(({ id, firstName, lastName }) => ({ id, firstName, lastName }));
 
   const totalcount = calculateTotalCount(plain);
-  await meeting.update({ totalcount }); // update DB
+  await meeting.update({ totalcount }); 
   plain.totalcount = totalcount;
   plain.subtitle = buildSubtitle(plain);
 
