@@ -1,5 +1,10 @@
 # CRM Backend API
 
+## Live API
+
+### Base URL
+https://crm-backend-pswf.onrender.com
+
 This is the backend service for a full stack CRM (Customer Relationship Management) system.  
 It provides secure RESTful APIs for managing leads, deals, tickets, companies, activities, and user authentication.
 
@@ -7,7 +12,7 @@ The backend handles business logic, database operations, role-based authorizatio
 
 ---
 
-##  Features
+## Features
 
 - User authentication (JWT)
 - Role-Based Access Control (RBAC)
@@ -23,20 +28,17 @@ The backend handles business logic, database operations, role-based authorizatio
 
 ---
 
-##  Role-Based Access Control
+## Role-Based Access Control
 
 The system implements role-based authorization to control access to resources.
 
-Example roles:
+### Admin
+- Full system access
+- View and manage all CRM data
 
-- **Admin**
-  - Full system access
-  - View and manage all CRM data
-
-
-- **User**
-  - Limited access to assigned records
-  - Create and update own leads and deals
+### User
+- Limited access to assigned records
+- Create and update own leads and deals
 
 Middleware is used to verify user roles before allowing access to protected routes.
 
@@ -44,47 +46,41 @@ Middleware is used to verify user roles before allowing access to protected rout
 
 ## Tech Stack
 
+### Backend
 - Node.js
 - Express.js
 - PostgreSQL
+- Sequelize ORM
 - JWT Authentication
-- REST API
-- Environment Variables (.env)
+
+### Tools
+- Postman (API testing)
+- Render (Deployment)
+- Neon PostgreSQL (Cloud database)
 
 ---
 
 ## Project Structure
 
 src/
-controllers/
-routes/
-models/
-middleware/
-config/
-services/
-utils/
+ ├── controllers/
+ ├── routes/
+ ├── models/
+ ├── middleware/
+ ├── config/
+ ├── services/
+ └── utils/
+ 
+##Getting Started
+1. Clone the repository
+git clone https://github.com/Mizba-Hub/CRM-BACKEND.git
+cd CRM-BACKEND
 
----
+3. Install dependencies
+npm install
+Environment Variables
 
-##  Getting Started
-
-### 1. Clone the repository
-git clone 
-cd
-
----
-
-### 2. Install dependencies
-
-Npm install
-
-
----
-
-##  Environment Variables
-
-Create a `.env` file in the root directory.  
-Copy values from `.env.example`.
+Create a .env file in the root directory.
 
 PORT=5000
 DB_NAME=crm_db
@@ -102,59 +98,59 @@ EMAIL_PASS=your_email_password
 FRONTEND_URL=http://localhost:3000
 NODE_ENV=development
 
----
+##Database Setup
 
-## Database Setup
+Install PostgreSQL
 
-1. Install PostgreSQL
-2. Create database
+Create database
 
-   CREATE DATABASE crm_db;
+CREATE DATABASE crm_db;
 
-3. Update credentials in `.env`
+Update credentials in .env
 
----
+##Running the Server
+Development-npm run dev
 
-## Running the Server
+Production-npm start
 
-Development:Npm run
+##Server runs at:
 
-production:npm start 
+http://localhost:5000
 
-Server runs at:http://localhost:5000
+##Deployment
 
----
+Backend API deployed on Render
+Database hosted on Neon PostgreSQL
 
-## Frontend Repository
+##Frontend Repository
 
-git@github.com:Mizba-Hub/CRM-PROJECT.git
+https://github.com/Mizba-Hub/CRM-PROJECT
 
----
+##System Architecture
 
-## API Testing
+Frontend → Next.js (Vercel)
+Backend → Node.js + Express (Render)
+Database → PostgreSQL (Neon)
+
+The frontend communicates with backend REST APIs for all CRM operations.
+
+##API Testing
 
 Test endpoints using:
+Postman
 
-- Postman
-
----
-
-##  Project Purpose
+##Project Purpose
 
 This backend was developed as part of a full stack CRM system to demonstrate real-world architecture with authentication, role-based authorization, and structured API design.
 
----
+##Security Notes
 
-## Security Notes
+• Do not commit .env
+• Store secrets securely
+• Validate all requests
+• Protect role-restricted routes
 
-- Do not commit `.env`
-- Store secrets securely
-- Validate all requests
-- Protect role-restricted routes
+##Author
 
----
-
-## Author
-
-Fathimathul Mizba  
+Fathimathul Mizba
 Full Stack Developer
